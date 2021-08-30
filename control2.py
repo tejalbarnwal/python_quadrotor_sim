@@ -45,6 +45,7 @@ class Controller(object):
         THETA = current_state[8]
         PSI = current_state[10]
         Z = current_state[4]
+        print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", Z)
 
         PHI_dot = current_state[7] 
         THETA_dot = current_state[9]
@@ -146,27 +147,33 @@ class Controller(object):
 
         # error
         e_Z = des_Z - Z
+        # print("ERRRRRRRRRRRRORRRRRRRRR",e_Z)
         e_Zdot = des_Zdot - Z_dot
 
         # sliding variable
         s_Z = e_Zdot + lambda_z * e_Z
 
         ## sign checking!!
-        u4 = self.m * ( self.g + des_Zddot + (lambda_z * e_Zdot) + k_z * np.sign( s_Z)) / (np.cos(PHI) * (np.cos(THETA)))
-
+        u4 = self.m * ( self.g + des_Zddot + (lambda_z * e_Zdot) + k_z * np.sign(s_Z)) / (np.cos(PHI) * (np.cos(THETA)))
+        # print("CONTROL SCRIPT ALTITUDEEE", u4)
+        # print("mass x gravity", self.m * self.g)
         u = np.hstack(np.array([u1, u2, u3, u4]))
+        s = np.hstack(np.array([s_PHI, s_THETA, s_PSI, s_Z]))
+        e = np.hstack(np.array([e_PHI, e_THETA, e_PSI, e_Z]))
+        e_dot = np.hstack(np.array([e_PHIdot, e_THETAdot, e_PSIdot, e_Zdot]))
 
-        return u
+
+        return u, s, e, e_dot
 
     def outer(self):
         pass
 
     def update(self, commanded, state, omega, Ts):
-        # cmd = commanded[[2,6,7,8]]
-        u = self.inner_loop(commanded, state, omega, Ts)
+        cmd = commanded[[6,7,8,2]]
+        u, s, e, e_dot = self.inner_loop(cmd, state, omega, Ts)
 
         # actuator commands
-        return u, commanded
+        return u, s, e, e_dot
 
 
  

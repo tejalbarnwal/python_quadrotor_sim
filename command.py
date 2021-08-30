@@ -7,7 +7,7 @@ import numpy as np
 
 class commander():
     def __init__(self):
-        self.position = np.array([0.0,0.0,0.0])
+        self.position = np.array([0.0, 0.0, 3.0])
         self.orientation = np.array([0.0, 0.0, 0.0])
         self.v = np.array([0.0,0.0,0.0])
         self.omega = np.array([0, 0, 0])
@@ -26,6 +26,7 @@ class commander():
 
     def get_command(self):
         commanded = np.hstack((self.position, self.v, self.orientation, self.omega))
+        # commanded = np.array([0., 0.0, 0.0, 3.0 ])
         return commanded
 
 

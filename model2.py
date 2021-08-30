@@ -7,6 +7,12 @@ class Quadrotor_model():
     # 12 states of quadrotor
     self.state = np.zeros((12,1), dtype=float)
 
+    # INITAL STATE
+    self.state[4] = 10.0
+    self.state[6] = 0.2
+    self.state[8] = -0.5
+    self.state[10] = -0.2
+
     # define physical parameters
     self.g = 9.81
     self.Ixx = 0.04 # TUNABLE
@@ -143,15 +149,18 @@ class Quadrotor_model():
       self.state[4] = Z
       self.state[5] = Z_dot
 
+      return self.updated_u
+
 
 
 
 # quad = Quadrotor_model()
 
-# z_ff = quad.m * quad.g * 2
+# z_ff = quad.m * quad.g 
+# print("Z FFFFF", z_ff)
 
 # Ts = 0.01
-# Tf = 20
+# Tf = 0.06
 # N = int(Tf/Ts)
 # print(quad)
 # print("ITERATIONS START TEJUU")
