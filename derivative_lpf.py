@@ -1,3 +1,5 @@
+import numpy as np
+
 class DirtyDerivative:
     """Dirty Derivative
     
@@ -54,3 +56,6 @@ class DirtyDerivative:
         self.x_d1 = x
                 
         return self.dxdt
+
+
+        

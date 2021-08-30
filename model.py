@@ -55,16 +55,16 @@ class Quadrotor_model():
 
     # define physical parameters
     self.g = 9.81
-    self.Jxx = 0.060224
-    self.Jyy = 0.122198
-    self.Jzz = 0.132166
-    self.m = 3.81
+    self.Jxx = 0.060224 # TUNABLE
+    self.Jyy = 0.122198 # TUNABLE
+    self.Jzz = 0.132166 # TUNABLE
+    self.m = 3.81 # TUNABLE
     self.I = np.diag([self.Jxx, self.Jyy, self.Jzz])
 
     # max control input possible
-    self.Tmax = 40 # maximum thrust that can be applied to motors
-    self.Mmax = 2 # maximum moment that can be applied to motors
-    self.u_max = np.array([self.Tmax, self.Mmax, self.Mmax, self.Mmax])
+    self.Tmax = 40 # maximum thrust that can be applied to motors # TUNABLE
+    self.Mmax = 2 # maximum moment that can be applied to motors # TUNABLE
+    self.u_max = np.array([self.Tmax, self.Mmax, self.Mmax, self.Mmax]) 
     
     # convenience
     self.Niters = 0   
@@ -81,7 +81,7 @@ class Quadrotor_model():
     # dt: time interval to estimate numerical solutions to differential eqtn
     # u: the control input
       self.Niters += 1
-      print("Niterations is ", self.Niters)
+      print("N in QUAD_MODEL is ", self.Niters)
     # update function
       # clamp out the control input
       # u > self.max control matrix, jaha true aaya vaha max control matrix ke value
@@ -91,11 +91,11 @@ class Quadrotor_model():
       ## involve kinematics
       # https://pythonnumericalmethods.berkeley.edu/notebooks/chapter22.03-The-Euler-Method.html
       # update the values of p_n, p_e, h
-      print("ORIENTATION MATRIX ISSS")
-      print(self.orientation)
+      # print("ORIENTATION MATRIX ISSS")
+      # print(self.orientation)
       phi, theta, psi = self.orientation.flatten()
       # print("phi:",phi,"theta:" , theta,"psi:", psi)
-      self.position = self.position + np.dot(Rot_i_to_b(phi, theta, psi).transpose(), self.vel) * dt
+      self.position = self.position + np.dot(Rot_i_to_b(phi, theta, psi).transpose(), self.vel) * dt 
       # update the values of phi, theta , psi
       self.orientation = self.orientation + np.dot(Rot_angVel_to_angRates(phi, theta, psi),self.angular_vel) * dt
 
@@ -127,19 +127,17 @@ class Quadrotor_model():
 
 
 
-quad = Quadrotor_model()
+# quad = Quadrotor_model()
 
-z_ff = quad.m*quad.g
+# z_ff = quad.m*quad.g*10
 
-Ts = 0.01
-Tf = 1.5
-N = int(Tf/Ts)
-for i in range(N):
-    m1 = 10 if Ts*i < 1 else 0
-    quad.update_states([z_ff, 0.0, 0.0, 0.0], Ts)
-print(quad)
-
-
+# Ts = 0.01
+# Tf = 2
+# N = int(Tf/Ts)
+# for i in range(N):
+#     m1 = 10 if Ts*i < 1 else 0
+#     quad.update_states([z_ff, 0.0, 0.0, 0.0], Ts)
+# print(quad)
 
 
 

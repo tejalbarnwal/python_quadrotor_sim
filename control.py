@@ -1,3 +1,5 @@
+
+from derivative_lpf import DirtyDerivative
 import numpy as np
 ## code requires restructuring , many things written explictly could be
 # written with matrix algebra
@@ -10,8 +12,12 @@ class Controller(object):
 
         # estimates of physical properties of the quadrotor
         self.g = 9.8
-        self.m = 4
-        Jxx = 0.1; Jyy = 0.1; Jzz = 0.1
+        # self.m = 4
+        # Jxx = 0.1; Jyy = 0.1; Jzz = 0.1
+        Jxx = 0.060224
+        Jyy = 0.122198
+        Jzz = 0.132166
+        self.m = 3.81
         self.I = np.array([[Jxx,0,0],
                            [0,Jyy,0],
                            [0,0,Jzz]])
@@ -53,8 +59,8 @@ class Controller(object):
         des_Zddot = self.dZdt2.update(des_Zdot, Ts)
 
         # gains
-        k_z = None
-        lambda_z = None
+        k_z = 6.0
+        lambda_z = 3.0
 
         # error
         e_Z = des_Z - req_states[0]
@@ -64,7 +70,7 @@ class Controller(object):
         s_Z = e_Zdot + lambda_z * e_Z
 
         ## sign checking!!
-        u1 = -self.m * ( -self.g + des_Zddot + lambda_z * e_Zdot + k_z * np.sign(s_Z)) / (np.cos(phi) * (np.cos(theta)))
+        u1 = self.m * ( self.g + des_Zddot - (lambda_z * e_Zdot) + k_z * np.sign( s_Z)) / (np.cos(phi) * (np.cos(theta)))
 
         ##### roll ###
         # desired stuff
@@ -73,15 +79,15 @@ class Controller(object):
         des_PHIddot = self.dPHIdt2.update(des_PHIdot, Ts)
 
         # gains
-        k_PHI = None
-        lambda_PHI = None
+        k_PHI = 1.0
+        lambda_PHI = 3.0
 
         # error
         e_PHI = des_PHI - req_states[1]
         e_PHIdot = des_PHIdot - req_states_d[1]
 
         # sliding variables
-        s_PHI = s_PHIdot + lambda_PHI * e_PHI
+        s_PHI = e_PHIdot + lambda_PHI * e_PHI
 
         # sign checking might be needed
         u2 = Jx * ( (req_states_d[2] * req_states_d[3] * (Jz - Jy) / Jx) +
@@ -97,15 +103,15 @@ class Controller(object):
         des_THETAddot = self.dTHETAdt2.update(des_THETAdot, Ts)
 
         # gains
-        k_THETA = None
-        lambda_THETA = None
+        k_THETA = 1.0
+        lambda_THETA = 3.0
 
         # error
         e_THETA = des_THETA - req_states[2]
         e_THETAdot = des_THETAdot - req_states_d[2]
 
         # sliding variables
-        s_THETA = s_THETAdot + lambda_THETA * e_THETA
+        s_THETA = e_THETAdot + lambda_THETA * e_THETA
 
         # sign checking might be needed
         u3 = Jx * ( (req_states_d[1] * req_states_d[3] * (Jx - Jz) / Jy) +
@@ -121,15 +127,15 @@ class Controller(object):
         des_PSIddot = self.dPSIdt2.update(des_PSIdot, Ts)
 
         # gains
-        k_PSI = None
-        lambda_PSI = None
+        k_PSI = 1.0
+        lambda_PSI = 3.0
 
         # error
         e_PSI = des_PSI - req_states[3]
         e_PSIdot = des_PSIdot - req_states_d[3]
 
         # sliding variables
-        s_PSI = s_PSIdot + lambda_PSI * e_PSI
+        s_PSI = e_PSIdot + lambda_PSI * e_PSI
 
         # sign checking might be needed
         u4 = Jx * ( (req_states_d[1] * req_states_d[2] * (Jy - Jx) / Jz) +
@@ -154,3 +160,13 @@ class Controller(object):
 
  
 
+# controller = Controller()
+
+# commanded = np.array([0., 0., -2., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+# state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+# Ts = 0.01
+
+# a, b = controller.update(commanded, state, Ts)
+
+# print("control input", a)
+# print("setpoints given", b)
